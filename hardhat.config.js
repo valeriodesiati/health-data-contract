@@ -17,11 +17,11 @@ export default {
         count: 10,
       },
     },
-    // Esempio di configurazione per una rete esterna
-    // amoy: {
-    //   url: process.env.INFURA_URL,
-    //   accounts: [process.env.DEPLOYER_PRIVATE_KEY]
-    // },
+    // Configurazione per una testnet esterna (amoy)
+    amoy: {
+      url: process.env.INFURA_URL,
+      accounts: [process.env.DEPLOYER_PRIVATE_KEY]
+    },
   },
   etherscan: {
     // Configurazione per la verifica dei contratti su Etherscan (o block explorer similare).
