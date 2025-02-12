@@ -1,21 +1,28 @@
+// deploy.js
+// Questo script utilizza ethers.js (attraverso Hardhat) per distribuire il contratto HealthDataRegistry.
+
+// Funzione principale di deploy.
 async function main() {
-  // Recupera il primo account dalla lista degli account disponibili
+  // Recupera il primo account dalla lista degli account disponibili (il deployer).
   const [deployer] = await ethers.getSigners();
   console.log("Deploying contracts with the account:", deployer.address);
   
-  // Ottieni la factory per il contratto
+  // Ottiene la factory del contratto HealthDataRegistry.
   const HealthDataRegistry = await ethers.getContractFactory("HealthDataRegistry");
-  // Distribuisci il contratto
+  
+  // Distribuisce il contratto.
   const contract = await HealthDataRegistry.deploy();
-  // Attendi che il contratto sia deployato (in ethers.js v6 usa waitForDeployment)
+
+  // Attende la conferma della distribuzione (in ethers.js v6 si usa waitForDeployment).
   await contract.waitForDeployment();
   
   console.log("Contract deployed to:", contract.target);
 }
 
+// Esecuzione della funzione main.
 main()
   .then(() => process.exit(0))
-  .catch(error => {
+  .catch((error) => {
     console.error(error);
     process.exit(1);
   });

@@ -1,0 +1,4 @@
+curl -X POST http://localhost:3000/store-key \
+-H "Content-Type: application/json" \
+-H "Authorization: Bearer <TOKEN_GENERATO>" \
+-d '{"patientAddress": "PATIENTADDRESS", "key": "la_chiave_generata"}'

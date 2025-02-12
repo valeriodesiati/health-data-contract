@@ -14,14 +14,11 @@ describe("HealthDataRegistry", function () {
 		// Compila e distribuisci il contratto
 		const ContractFactory = await ethers.getContractFactory("HealthDataRegistry");
 		contract = await ContractFactory.deploy();
-		// In ethers v6, usa waitForDeployment invece di deployed()
 		await contract.waitForDeployment();
 	});
 
-
 	it("Dovrebbe registrare un paziente", async function () {
 		await contract.connect(owner).registerPatient();
-		// Per verificare che il paziente sia registrato, proviamo a chiamare updateHealthData senza errori
 		await expect(contract.connect(owner).updateHealthData("ipfsHash123")).to.not.be.reverted;
 	});
 
@@ -40,7 +37,6 @@ describe("HealthDataRegistry", function () {
 	it("Dovrebbe autorizzare un provider", async function () {
 		await contract.connect(owner).registerPatient();
 		await contract.connect(owner).authorizeProvider(addr1.address);
-		// Ora, addr1 dovrebbe essere in grado di chiamare getHealthData
 		await contract.connect(owner).updateHealthData("ipfsHash123");
 		const data = await contract.connect(addr1).getHealthData(owner.address);
 		expect(data).to.equal("ipfsHash123");
@@ -51,12 +47,24 @@ describe("HealthDataRegistry", function () {
 		await contract.connect(owner).authorizeProvider(addr1.address);
 		await contract.connect(owner).updateHealthData("ipfsHash123");
 
-		// Verifichiamo che addr1 possa leggere i dati
 		const data = await contract.connect(addr1).getHealthData(owner.address);
 		expect(data).to.equal("ipfsHash123");
 
-		// Revoca l'autorizzazione e poi l'accesso dovrebbe fallire
 		await contract.connect(owner).revokeProvider(addr1.address);
 		await expect(contract.connect(addr1).getHealthData(owner.address)).to.be.revertedWith("Accesso non autorizzato");
+	});
+
+	it("Dovrebbe emettere l'evento KeyRequested per un provider autorizzato", async function () {
+		await contract.connect(owner).registerPatient();
+		await contract.connect(owner).authorizeProvider(addr1.address);
+		await expect(contract.connect(addr1).requestDecryptionKey(owner.address))
+			.to.emit(contract, "KeyRequested")
+			.withArgs(owner.address, addr1.address);
+	});
+
+	it("Non dovrebbe permettere a un non autorizzato di richiedere la chiave", async function () {
+		await contract.connect(owner).registerPatient();
+		await expect(contract.connect(addr2).requestDecryptionKey(owner.address))
+			.to.be.revertedWith("Accesso non autorizzato");
 	});
 });
