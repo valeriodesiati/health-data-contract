@@ -3,22 +3,22 @@ pragma solidity ^0.8.28;
 
 /**
  * @title HealthDataRegistry
- * @dev Questo smart contract gestisce i dati sanitari cifrati dei pazienti,
- * la registrazione degli stessi e l'autorizzazione di provider per accedere ai dati.
+ * @dev This smart contract manages encrypted health data for patients,
+ *      their registration, and the authorization of providers to access the data.
  */
 contract HealthDataRegistry {
-    // Struttura per rappresentare un paziente.
-    // Contiene l'hash IPFS dei dati sanitari cifrati, un mapping degli indirizzi autorizzati e un flag di esistenza.
+    // Structure to represent a patient.
+    // It contains the encrypted IPFS hash of health data, a mapping of authorized addresses, and an existence flag.
     struct Patient {
-        string encryptedIpfsHash;
-        mapping(address => bool) authorized;
-        bool exists;
+        string encryptedIpfsHash; // Encrypted IPFS hash of the health data
+        mapping(address => bool) authorized; // Mapping of authorized providers
+        bool exists; // Flag indicating if the patient is registered
     }
 
-    // Mapping che associa ogni indirizzo (paziente) alla propria struttura Patient.
+    // Mapping that links each patient's address to their Patient structure
     mapping(address => Patient) private patients;
 
-    // Eventi per tracciare le operazioni sul contratto.
+    // Events to track operations on the contract
     event PatientRegistered(address indexed patient);
     event DataUpdated(address indexed patient, string ipfsHash);
     event ProviderAuthorized(address indexed patient, address indexed provider);
@@ -26,95 +26,104 @@ contract HealthDataRegistry {
     event KeyRequested(address indexed patient, address indexed requester);
 
     /**
-     * @notice Registra un paziente se non è già registrato.
+     * @notice Registers a new patient if not already registered.
      */
     function registerPatient() public {
-        require(!patients[msg.sender].exists, "Il paziente e' gia' registrato");
+        require(
+            !patients[msg.sender].exists,
+            "The patient is already registered"
+        );
         patients[msg.sender].exists = true;
         emit PatientRegistered(msg.sender);
     }
 
+    // Modifier to check that the caller is a registered patient
+    modifier onlyPatient() {
+        require(patients[msg.sender].exists, "Not a patient");
+        _;
+    }
+
     /**
-     * @notice Aggiorna i dati sanitari (l'hash IPFS dei dati cifrati) del paziente.
-     * @param _ipfsHash L'hash IPFS che punta ai dati sanitari cifrati.
+     * @notice Updates the patient's health data (the encrypted IPFS hash).
+     * @param _ipfsHash The IPFS hash pointing to the encrypted health data.
      */
-    function updateHealthData(string memory _ipfsHash) public {
-        require(patients[msg.sender].exists, "Paziente non registrato");
+    function updateHealthData(string memory _ipfsHash) public onlyPatient {
+        require(patients[msg.sender].exists, "Patient not registered");
         patients[msg.sender].encryptedIpfsHash = _ipfsHash;
         emit DataUpdated(msg.sender, _ipfsHash);
     }
 
     /**
-     * @notice Autorizza un provider ad accedere ai dati sanitari.
-     * @param _provider Indirizzo del provider da autorizzare.
+     * @notice Authorizes a provider to access the patient's health data.
+     * @param _provider The address of the provider to authorize.
      */
     function authorizeProvider(address _provider) public {
-        require(patients[msg.sender].exists, "Paziente non registrato");
+        require(patients[msg.sender].exists, "Patient not registered");
         require(
             !patients[msg.sender].authorized[_provider],
-            "Provider gia' autorizzato"
+            "Provider already authorized"
         );
         patients[msg.sender].authorized[_provider] = true;
         emit ProviderAuthorized(msg.sender, _provider);
     }
 
     /**
-     * @notice Revoca l'autorizzazione ad un provider precedentemente autorizzato.
-     * @param _provider Indirizzo del provider da revocare.
+     * @notice Revokes authorization for a previously authorized provider.
+     * @param _provider The address of the provider to revoke.
      */
     function revokeProvider(address _provider) public {
-        require(patients[msg.sender].exists, "Paziente non registrato");
+        require(patients[msg.sender].exists, "Patient not registered");
         require(
             patients[msg.sender].authorized[_provider],
-            "Provider non autorizzato"
+            "Provider not authorized"
         );
         patients[msg.sender].authorized[_provider] = false;
         emit ProviderRevoked(msg.sender, _provider);
     }
 
     /**
-     * @notice Restituisce i dati sanitari cifrati (IPFS hash) se il richiedente è il paziente o un provider autorizzato.
-     * @param _patient Indirizzo del paziente di cui si vogliono ottenere i dati.
-     * @return string L'hash IPFS contenente i dati sanitari cifrati.
+     * @notice Retrieves the encrypted health data (IPFS hash) if the requester is the patient or an authorized provider.
+     * @param _patient The address of the patient whose data is being requested.
+     * @return string The IPFS hash containing the encrypted health data.
      */
     function getHealthData(
         address _patient
     ) public view returns (string memory) {
         require(
             _patient == msg.sender || patients[_patient].authorized[msg.sender],
-            "Accesso non autorizzato"
+            "Unauthorized access"
         );
         return patients[_patient].encryptedIpfsHash;
     }
 
     /**
-     * @notice Funzione per richiedere la chiave di decrittazione dei dati sanitari.
-     * L'accesso è consentito solo al paziente o a un provider autorizzato.
-     * @param patient Indirizzo del paziente.
+     * @notice Requests the decryption key for the health data.
+     * Access is granted only to the patient or an authorized provider.
+     * @param patient The address of the patient for whom the decryption key is requested.
      */
     function requestDecryptionKey(address patient) public {
-        require(patients[patient].exists, "Paziente non registrato");
+        require(patients[patient].exists, "Patient not registered");
         require(
             patient == msg.sender || patients[patient].authorized[msg.sender],
-            "Accesso non autorizzato"
+            "Unauthorized access"
         );
         emit KeyRequested(patient, msg.sender);
     }
 
     /**
-     * @notice Funzione helper per verificare se un paziente è registrato.
-     * @param _patient Indirizzo del paziente.
-     * @return bool True se il paziente è registrato.
+     * @notice Helper function to check if a patient is registered.
+     * @param _patient The address of the patient.
+     * @return bool True if the patient is registered.
      */
     function isPatientRegistered(address _patient) public view returns (bool) {
         return patients[_patient].exists;
     }
 
     /**
-     * @notice Funzione helper per verificare se un provider è autorizzato per un dato paziente.
-     * @param _patient Indirizzo del paziente.
-     * @param _provider Indirizzo del provider.
-     * @return bool True se il provider è autorizzato.
+     * @notice Helper function to check if a provider is authorized for a given patient.
+     * @param _patient The address of the patient.
+     * @param _provider The address of the provider.
+     * @return bool True if the provider is authorized.
      */
     function isProviderAuthorized(
         address _patient,

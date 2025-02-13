@@ -7,7 +7,7 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
 
-// Carica le variabili d'ambiente dal file .env.
+// Carica le variabili d'ambiente dal file .env per l'accesso ai segreti e configurazioni.
 dotenv.config();
 
 const app = express();
@@ -19,9 +19,14 @@ const keys = {};
 // Abilita il parsing del JSON per le richieste HTTP.
 app.use(express.json());
 
+// Limita il numero di richieste per evitare abusi delle API (fino a 100 richieste ogni 15 minuti).
+const rateLimit = require('express-rate-limit');
+app.use(rateLimit({ windowMs: 15*60*1000, max: 100 }));
+
 /**
  * @notice Middleware per l'autenticazione tramite token JWT.
  * Verifica che il token sia presente nell'header Authorization e lo decodifica.
+ * Questo middleware è necessario per proteggere tutte le rotte che richiedono accesso ai dati sensibili.
  */
 function authenticateToken(req, res, next) {
   const authHeader = req.headers['authorization'];
@@ -44,6 +49,7 @@ function authenticateToken(req, res, next) {
 /**
  * @notice API per salvare la chiave di cifratura per un paziente.
  * Solo il paziente (autenticato) può salvare la propria chiave.
+ * L'API riceve l'indirizzo del paziente e la chiave di cifratura da associare a tale indirizzo.
  */
 app.post('/store-key', authenticateToken, (req, res) => {
   const { patientAddress, key } = req.body;
@@ -53,6 +59,7 @@ app.post('/store-key', authenticateToken, (req, res) => {
     return res.status(403).json({ error: 'Non autorizzato a salvare la chiave per questo indirizzo' });
   }
   
+  // Memorizza la chiave di cifratura per il paziente specificato.
   keys[patientAddress] = key;
   res.json({ message: `Chiave salvata per ${patientAddress}` });
 });
@@ -60,15 +67,17 @@ app.post('/store-key', authenticateToken, (req, res) => {
 /**
  * @notice API per ottenere la chiave di cifratura.
  * Solo il paziente autenticato (e in ambienti reali anche eventuali provider autorizzati) possono accedere alla chiave.
+ * L'API restituisce la chiave cifrata associata all'indirizzo del paziente.
  */
 app.get('/get-key/:patientAddress', authenticateToken, (req, res) => {
   const patientAddress = req.params.patientAddress;
   
-  // Verifica che l'utente autenticato sia lo stesso del paziente.
+  // Verifica che l'utente autenticato sia lo stesso del paziente per cui si richiede la chiave.
   if (req.user.address.toLowerCase() !== patientAddress.toLowerCase()) {
     return res.status(403).json({ error: 'Non autorizzato a richiedere la chiave per questo indirizzo' });
   }
   
+  // Se la chiave esiste, la restituisce. Altrimenti restituisce un errore 404.
   if (keys[patientAddress]) {
     res.json({ key: keys[patientAddress] });
   } else {

@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "docs": "jsdoc *.js contracts/*.sol scripts/*.js scripts/*.mjs src/*.cjs src/*.mjs src/*.js *.js -d docs"
   },
   "keywords": [],
   "author": "",
@@ -12,15 +13,18 @@
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^5.0.0",
     "hardhat": "^2.22.18",
-    "hardhat-gas-reporter": "^1.0.10"
+    "hardhat-gas-reporter": "^1.0.10",
+    "jsdoc": "^4.0.4"
   },
   "dependencies": {
     "22": "^0.0.0",
     "@nomicfoundation/hardhat-ethers": "^3.0.8",
     "@nomicfoundation/hardhat-network-helpers": "^1.0.12",
+    "axios": "^1.7.9",
     "dotenv": "^16.4.7",
     "ethers": "^6.13.5",
     "express": "^4.21.2",
+    "express-rate-limit": "^7.5.0",
     "ipfs": "^0.66.1",
     "ipfs-http-client": "^60.0.1",
     "jsonwebtoken": "^9.0.2"
