@@ -144,7 +144,7 @@ Il server **key-manager.js**:
 
 ## Autori
 
-Valerio Desiati - <valerio.desiati@studio.unibo.it>
+Valerio Desiati - <valerio.desiati@studio.unibo.it> <br>
 Lucrezia Ilvento - <lucrezia.ilvento@studio.unibo.it>
 
 ---
