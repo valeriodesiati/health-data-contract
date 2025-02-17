@@ -9,9 +9,6 @@ const { ethers } = require("hardhat");
 // Hardhat
 const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
 
-// // Amoy
-// const contractAddress = "0xc967890be78be0Be568A9717705F2141A2EfF9B5";
-
 // Importa l'ABI del contratto.
 const { abi } = require("../artifacts/contracts/HealthDataRegistry.sol/HealthDataRegistry.json");
 

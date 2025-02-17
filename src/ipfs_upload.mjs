@@ -1,3 +1,5 @@
+// ipfs_upload.mjs
+
 import { encryptData, generateKey, decryptData } from "./encryption.cjs";
 import axios from 'axios';
 import dotenv from 'dotenv';
