@@ -137,8 +137,8 @@ Il server **key-manager.js**:
 
 ## Valutazione
 
-- **Sicurezza e Privacy:** Il sistema garantisce che i dati sanitari siano cifrati prima del caricamento su IPFS e che le chiavi siano gestite separatamente, riducendo il rischio di accessi non autorizzati.
-- **Gas Consumption:** Grazie all'integrazione del gas reporter in Hardhat, è possibile misurare il consumo di gas per ciascuna operazione dello smart contract e ottimizzare il sistema.
+- **Sicurezza e privacy:** Il sistema garantisce che i dati sanitari siano cifrati prima del caricamento su IPFS e che le chiavi siano gestite separatamente, riducendo il rischio di accessi non autorizzati.
+- **Gas consumption:** Grazie all'integrazione del gas reporter in Hardhat, è possibile misurare il consumo di gas per ciascuna operazione dello smart contract e ottimizzare il sistema.
 
 ---
 
