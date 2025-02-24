@@ -53,8 +53,6 @@ Il progetto è suddiviso in diversi moduli:
 - Variabili d'ambiente (file `.env`) per configurare:
   - PINATA_API_KEY e PINATA_API_SECRET
   - ACCESS_TOKEN_SECRET (per JWT)
-  - INFURA_URL, MNEMONIC (se si intende deployare su reti esterne)
-  - Altri parametri di configurazione
 
 ---
 
@@ -78,12 +76,13 @@ Il progetto è suddiviso in diversi moduli:
    Crea un file `.env` nella root del progetto con i seguenti contenuti (modifica i valori con le tue credenziali):
 
    ```env
-   PINATA_API_KEY=la_tua_pinata_api_key
-   PINATA_API_SECRET=il_tuo_pinata_api_secret
-   ACCESS_TOKEN_SECRET=una_stringa_segreta_per_jwt
-   INFURA_URL=https://mainnet.infura.io/v3/tuo_project_id
-   MNEMONIC=la_tua_mnemonica
-   PORT=3000
+    # Stringa segreta generata per ogni utente, serve a firmare e verificare il token JWT - genera con "openssl rand -hex 32"
+    ACCESS_TOKEN_SECRET=
+
+    # Accesso a Pinata
+    PINATA_API_KEY=
+    PINATA_API_SECRET=
+
    ```
 
    **Nota:** Assicurati di aggiungere il file `.env` al tuo `.gitignore` per evitare la pubblicazione di informazioni sensibili.
