@@ -5,8 +5,7 @@
 
 const { ethers } = require("hardhat");
 
-// Indirizzo in cui è stato distribuito il contratto.
-// Hardhat
+// Indirizzo al quale è stato distribuito il contratto.
 const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
 
 // Importa l'ABI del contratto.

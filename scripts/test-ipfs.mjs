@@ -1,15 +1,12 @@
 // test-ipfs.mjs
 
 import { uploadToIPFS } from "../src/ipfs_upload.mjs"; // Funzione che esegue l'upload su IPFS e salva la chiave
-import { create } from 'ipfs-core'; // Per interagire con IPFS
 import { decryptData } from "../src/encryption.cjs"; // Funzione per decrittare i dati
 import jwt from 'jsonwebtoken';
 import axios from 'axios';
 import dotenv from 'dotenv';
-import https from 'https';
 
 dotenv.config();
-
 
 /**
  * Testa l'upload su IPFS.
@@ -46,7 +43,6 @@ async function testDataDecryption(ipfsHash, patientAddress) {
     console.log("inizio test decrypt");
     try {
         // Recupera i dati cifrati da IPFS tramite il CID
-        // const ipfsUrl = `https://gateway.pinata.cloud/ipfs/${ipfsHash}`;
         const ipfsUrl = 'https://plum-secret-felidae-888.mypinata.cloud/ipfs/'+ipfsHash;
         console.log("Recupero dati cifrati da IPFS tramite URL:", ipfsUrl);
 
