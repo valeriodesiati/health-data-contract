@@ -7,6 +7,7 @@ Un prototipo per la gestione sicura e decentralizzata dei dati sanitari, che int
 ## Panoramica del progetto
 
 Questo progetto è stato sviluppato per dimostrare come:
+
 - **I dati sanitari vengano cifrati** utilizzando l'algoritmo AES-256-CBC.
 - **Gli hash dei dati cifrati** vengano memorizzati in un Personal Data Store decentralizzato (IPFS) tramite il servizio Pinata.
 - **Uno smart contract (HealthDataRegistry.sol)** gestisca la registrazione dei pazienti e il controllo degli accessi (autorizzazione/revoca dei provider).
@@ -82,7 +83,6 @@ Il progetto è suddiviso in diversi moduli:
     # Accesso a Pinata
     PINATA_API_KEY=
     PINATA_API_SECRET=
-
    ```
 
    **Nota:** Assicurati di aggiungere il file `.env` al tuo `.gitignore` per evitare la pubblicazione di informazioni sensibili.
@@ -93,35 +93,14 @@ Il progetto è suddiviso in diversi moduli:
    npx hardhat compile
    ```
 
-5. **Deploy del contratto:**
-
-   Utilizza lo script di deploy per distribuire il contratto sulla rete desiderata (es. rete locale):
-
-   ```bash
-   npx hardhat run scripts/deploy.js --network localhost
-   ```
-
 ---
 
 ## Utilizzo
 
-### Interazione con lo Smart Contract
-
-Per simulare l'interazione con il contratto (registrazione paziente, aggiornamento dati, autorizzazione provider, richiesta della chiave):
-
-```bash
-npx hardhat run scripts/interact.js --network localhost
-```
-
-Lo script **interact.js** mostra:
-- La registrazione del paziente e il controllo degli accessi.
-- L'aggiornamento dei dati sanitari e il caricamento dell'hash su IPFS.
-- L'autorizzazione e la revoca dei provider.
-- La richiesta della chiave di decifratura.
-
 ### Caricamento dei dati su IPFS con Pinata
 
 Il modulo **ipfs_upload.mjs**:
+
 - Cifra i dati sanitari utilizzando il modulo **encryption.cjs**.
 - Carica i dati cifrati su IPFS tramite Pinata.
 - Invia la chiave di cifratura al Key Manager, garantendo che la chiave non sia memorizzata nello smart contract.
@@ -129,8 +108,57 @@ Il modulo **ipfs_upload.mjs**:
 ### Gestione delle chiavi con il Key Manager
 
 Il server **key-manager.js**:
+
 - Avvia un'API REST per memorizzare e recuperare la chiave di cifratura associata a ciascun paziente.
 - Utilizza JWT per autenticare le richieste, assicurando che solo il paziente autorizzato possa accedere alla propria chiave.
+
+### Interazione con lo Smart Contract
+
+Simulazione dell'interazione con il contratto (registrazione paziente, aggiornamento dati, autorizzazione provider, richiesta della chiave).
+
+Avvio della rete hardhat locale:
+
+  ```bash
+  npx hardhat node
+  ```
+
+Deploy del contratto sulla rete locale:
+
+   ```bash
+   npx hardhat run scripts/deploy.js --network localhost
+   ```
+
+Avvio del server Key Manager:
+
+  ```bash
+  npx hardhat run src/key-manager.js --network localhost
+  ```
+
+Avvio script di interazione:
+
+  ```bash
+  npx hardhat run scripts/interact.js --network localhost
+  ```
+
+Lo script **interact.js** mostra:
+
+- La registrazione del paziente e il controllo degli accessi.
+- L'aggiornamento dei dati sanitari e il caricamento dell'hash su IPFS.
+- L'autorizzazione e la revoca dei provider.
+- La richiesta della chiave di decifratura.
+
+Avvio script di test del caricamento dei dati sanitari criptati:
+
+  ```bash
+  npx hardhat run scripts/test-ipfs.mjs --network localhost
+  ```
+
+Lo script **test-ipfs.mjs** mostra:
+
+- Caricamento del file con i dati sanitari criptati su Pinata.
+- Download del file da Pinata previa verifica delle autorizzazioni.
+- La richiesta della chiave di decifratura.
+- Test decript dei dati.
 
 ---
 
