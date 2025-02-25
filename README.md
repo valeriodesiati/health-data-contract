@@ -95,10 +95,10 @@ Il progetto è suddiviso in diversi moduli:
 
 5. **Deploy del contratto:**
 
-   Utilizza lo script di deploy per distribuire il contratto sulla rete desiderata (es. rete locale Hardhat):
+   Utilizza lo script di deploy per distribuire il contratto sulla rete desiderata (es. rete locale):
 
    ```bash
-   npx hardhat run scripts/deploy.js --network hardhat
+   npx hardhat run scripts/deploy.js --network localhost
    ```
 
 ---
