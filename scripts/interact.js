@@ -6,7 +6,7 @@
 const { ethers } = require("hardhat");
 
 // Indirizzo al quale è stato distribuito il contratto.
-const contractAddress = "0x1429859428C0aBc9C2C47C8Ee9FBaf82cFA0F20f";
+const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
 
 // Importa l'ABI del contratto.
 const { abi } = require("../artifacts/contracts/HealthDataRegistry.sol/HealthDataRegistry.json");
