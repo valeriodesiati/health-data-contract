@@ -2,6 +2,12 @@
 
 Un prototipo per la gestione sicura e decentralizzata dei dati sanitari, che integra un smart contract su blockchain, la cifratura dei dati e l'archiviazione su IPFS tramite Pinata. Il sistema include inoltre un Key Manager per gestire in modo sicuro le chiavi di decrittazione, evitando di memorizzarle direttamente nello smart contract.
 
+Il prototipo è frutto di quanto descritto nel seguente paper:
+Montagna, S., Ferretti, S., Klopfenstein, L. C., Florio, A., & Pengo, M. F. (2023).  
+*"Data Decentralisation of LLM-Based Chatbot Systems in Chronic Disease Self-Management"*.  
+In *Proceedings of the ACM International Conference on Information Technology for Social Good (GoodIT 2023)*, ACM, September 2023, Lisbon, Portugal.  
+[DOI/Link al paper](https://dl.acm.org/doi/fullHtml/10.1145/3582515.3609536)
+
 ---
 
 ## Panoramica del progetto
